@@ -14,16 +14,18 @@ const io = new Server(server, {
     cors: {
         origin: "*",
     }
-} )
+})
 
+const mensajes = []
 io.on("connection", (socket) => {
     console.log("Usuario conectado: ")
 
-    socket.emit("message", "Bienvenido servidor de WebSocket")
+    socket.emit("message", mensajes)
 
-    socket.on("message", (mensaje) => {
+    socket.on("message", (msg) => {
+        mensajes.push(msg)
         socket.emit("confirmation", "Mensaje enviado correctamente")
-        socket.broadcast.emit("message", "Enviaron esto: " + mensaje)
+        io.emit("message", mensajes)
 
         //io.emit("message", "Enviaron esto: " + mensaje) -> Envia el mensaje a todos los clientes conectados, incluido el que lo envio
         //socket.emit -> Envia el mensaje solo al cliente que lo envio
